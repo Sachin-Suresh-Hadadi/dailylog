@@ -1,0 +1,150 @@
+ 
+
+########################### git-commands #######################
+
+
+* To check version             ---->  git version
+* To clone repository          ---->  git clone <git--url>
+* To check status              ---->  git status
+* To add to staginng area      ---->  git add <file name>  (or)  git add .      # "." to add all the files in taging area
+* To add only modified files 
+  leaving untracked files      ---->  git add -u
+* To stage all files           ---->  git add -A
+* To commit the file/change    ---->  git commit -m "<commit-message>"
+* To push to the remote repo   ---->  git push <remote-repo-name> <name-of-branch-to-push>
+* To start fresh git repo
+  in local/ initialise         ---->  git init 
+* To configure username        ---->  git config --global user.name "git_user_name"
+* To configure email           ---->  git config --global user.name "git_user_mail"
+* To list user                 ---->  git config --global --list    
+* To get all tracked files     ---->  git ls-files
+* To get logs of commits       ---->  git log (or) git log --abbrev-commit (or) git log --oneline --graph --decorate --all
+* To get a logs in between 2 
+  commits                      ----> git log <from_commit_id>...<to-commit-id>
+* To get commits happend in 
+  last n days                  ----> git log --since="<n> days ago"  # n= no of days
+* To get logs of a file        ----> git log -- <file_name>
+* To get log of renamed        ----> git log -- follow -- <file-path>
+* To show about specific commit ---> git show <commit-id>
+* To edit the commit message   ----> git commit --amend
+ 
+################## git workflow (push,pull) ####################
+
+* To pull from remote repo     ----> git pull <remote-repo-name> <name-of-branch-to-push>
+* To push to the remote repo   ----> git push <remote-repo-name> <name-of-branch-to-push>
+
+#################  tracking files    ##################
+
+* To add and commit the 
+  tracked file                 ----> git commit -am "<your-message>"   # trackerd file : These are the files previously commited to git
+
+############ backing out changes (undo,rename,move,delete)    ###################
+
+* To backout changes added to 
+  staging area                 ----> git reset HEAD <name-of-file>    # To unstage from staging area
+* To undo the changes made     ----> git checkout -- <file-name-to-undo-changes>  # this will undo the changes that have been made to a file after the last commit
+* To rename file using git     ----> git mv <source_file> <new-file-name>
+* To move file using git       ----> git mv <source_file_path> <destination_file_path> 
+* To remove tracked file       ----> git rm <file_to_remove>  # the specified file move from committed to staging area and commit to remove 
+* To undo delete staged file 
+  that is in staging area       ---> git reset HEAD <file_name> # the file will be added to git repo but will not be present in working directory to get it back in wd
+* To undo deleted file to 
+  working directory             ---> git checkout <filename>
+* To add deletetion done  
+  directley on working directory --> git add -A # If a staged file is removed/deleted directley from working directory, this will be in staging area, commit to 
+                                                  delete permenentley
+       
+#############  how to set up alias in git ###############
+
+* To create alias              ----> git config --global alias.<alias-name> "<operation-to-perform>" 
+                                     ## eg git config --global alias.history "log --all --oneline --graph --decorate"
+* To update alias              ----> nano ~/.gitconfig
+
+#############  comparing differences   #############
+
+* To get diff bw staging area 
+  and working directory        ----> git diff (or) git diff -- <file-name> # to get the difference of a specific file
+* To get diff bw last commit
+  and working directory        ----> git diff HEAD
+* To get diff bw staged and
+  and last commit              ----> git diff --staged HEAD
+* To get diff between committs ----> git diff <commit-id1> <comit-id2>
+* To compare b/w last 2 commit ----> git diff HEAD HEAD^
+* To get diff b/w branches     ----> git diff master origin/master
+
+###########  branching and merging    ########################
+
+* To list local branch         -----> git branch
+* To list all branches         -----> git branch -a ## list all local and remote 
+* To create a branch           -----> git branch <branch-name>-----------------------|
+                                                                                     |-----> to create and switch simontaniously ==> git checkout -b <branch-name>  
+* To switch branch             -----> git checkout <branch-name>---------------------|
+* To renmane branch            -----> git branch -m <old_name> <new_name>
+* To delete branch             -----> git branch -d <old_name> <new_name>
+* To merge                     -----> git merge <name-of-the-branch-to-merge> -m "<message>" ## merge with master/main branch and see difference beform merging
+* To merge without fast forword ----> git merge <name-of-the-branch-to-merge> --no-ff -m "<message>"
+* Merging conflict             -----> 
+ 
+#####################  rebeasing  ############################
+
+* To rebasing to main/master  ------> git rebase <branch-name> # aftre branching out, if u want to get all the updates/modifications from specified branch
+* To abort rebase if conflict 
+  is raised                   ------> git rebase --abort
+* To merge conflicts          ------> git mergetool --tool=<your_merge_tool_name>
+* To continue rebase after
+  solving conflicts           ------> git rebase --continue
+
+############   stashing   ######################
+
+* Stashing is like pausing, if we want to pause the curent working and work on something important, we can stach the process as it pauses and changes all the files
+  to previous commit
+* To stash/pause               -----> git stash 
+* To undo stash                -----> git stash apply
+* To list all stashes          -----> git stash list
+* To drop the stash            -----> git stash drop
+* To consider even untracked 
+  files                        -----> git stash -u
+* To combine both apply & drop -----> git stash pop
+* To save stash with message   -----> git stash save "<stash_message>"
+* To get info of specific stash ----> git stash show stash@{index_num}  # you will get index_num if you do "git stash list"\
+* To apply to a specific stash  ----> git stash apply stash@{index_num}
+* To drop a specific stash     -----> git stash drop stash@{index_num}
+* To delete all stashes        -----> git stash clear
+* To switch to new branch     ------> git stash branch <branch_name> # it will create & switch 2 new specified branch and drops the stash 
+
+###################  tagging  ############################
+
+* To create a tag             ------> git tag <tag_name> ##light-weight tag
+* To list tags                ------> git tag --list
+* To get info of tag          ------> git show <tag_name>
+* To delete tag               ------> git tag --delete <tag-name>
+* To create annotated tag     ------> git tag -a <tag-name> -m "<tag_message>" ## gives some more info than leight-weight tag
+* To diplay diff b/w tags     ------> git diff <first-tag> <second-tag>
+* To tagging specific commit  ------> git tag -a <tag-name> -m <tag-msg> <commit-id>
+* To update tags              ------> git tag -a <tag-name> -m <message> -f <correct-commit-id>
+* To push a specific tag to remote -> git push <remote-repo-name> <tag-name>
+* To push all tags to remote  ------> git push <remote_repo_name> <branch_name_2_push> --tags
+* To delete a tag in remote repo -->  git push <remote-repo-name> :<tag-name> ## delete tag from repo but will be present in local
+
+############################## reset,reflog and compare branches  ##########################################
+
+* To set head back to previous
+  nth commit                   ----> git reset HEAD^(n) git reset HEAD@{n} or   ## n specifies no of commits back u want to go to
+* To get history of all the 
+  reset commands              -----> git reflog
+* To change to a specific 
+  commit using commit id      -----> git reset <commit-id> ### u will get id by "git reflog"
+
+
+#######################################################################################################################################################################
+
+                                                                        AZURE POLYBASE
+
+#######################################################################################################################################################################
+
+
+
+ 
+
+
+

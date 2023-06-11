@@ -1,0 +1,128 @@
+               ----------------------------------------------------------------     **********        -------------------------------------------------------------
+CREATE MASTER KEY     
+
+  * The database master key is a symmetric key used to protect the private keys of certificates and asymmetric keys that are present in the database. When it is created
+    the master key is encrypted by using the AES_256 algorithm and a user-supplied password."
+
+               ----------------------------------------------------------------     **********        -------------------------------------------------------------
+
+CREATE DATABASE SCOPED CREDENTIAL <credential-scope-name>
+WITH  
+   IDENTITY = '<username>',
+   SECRET  = '<secret-key-of-source-account>'
+
+  * CREATE DATABASE SCOPED CREDENTIAL: This statement is used to create a database-scoped credential. A database-scoped credential is used to store and manage the
+                                       authentication information required to access external data sources or services.
+
+  * IDENTITY: The IDENTITY parameter specifies the identity or username associated with the credential, you can replace it with the actual identity or username required
+              for authentication.
+  * SECRET: The SECRET parameter is used to specify the secret or password associated with the credential.
+ 
+               ----------------------------------------------------------------     **********        -------------------------------------------------------------
+
+
+CREATE EXTERNAL DATA SOURCE <data-source-name>
+WITH
+(
+    TYPE = hadoop,
+    LOCATION = <location-of-the-data-source> , 
+    CREDENTIAL = <name-of-the-scoped-credential>
+)
+ 
+  * CREATE EXTERNAL DATA SOURCE: This statement is used to create an external data source, which represents a connection to an external data location or service
+                                 <data-source-name>: You need to replace <data-source-name> with the desired name for your external data source. Choose a name that
+                                 represents the data source you are connecting to.
+
+  * TYPE:     The TYPE parameter specifies the type of the external data source. In this case, it is set to "hadoop" which indicates that the data source is based on
+              Hadoop. However, depending on your specific scenario, you may need to use a different type such as "SQL Server", "Oracle", "Azure Blob Storage", or others,
+              depending on the data source you are connecting to.
+
+  * LOCATION: The LOCATION parameter specifies the location of the data source. You need to replace <location-of-the-data-source> with the actual address or location
+              of your data source.
+
+  * CREDENTIAL: The CREDENTIAL parameter specifies the name of the database-scoped credential that will be used for authentication when accessing the external data
+                source. You need to replace <name-of-the-scoped-credential> with the actual name of the credential you created earlier using the
+                "CREATE DATABASE SCOPED CREDENTIAL" statement as specified above.
+
+
+               ----------------------------------------------------------------     **********        -------------------------------------------------------------
+
+
+
+CREATE EXTERNAL FILE FORMAT <name-of-file-format>
+WITH
+(
+    FORMAT_TYPE = <format-typr>,
+    FORMAT_OPTIONS  (
+         FIELD_TERMINATOR = <delimitter>,
+         FIRST_ROW = <specify-the-number-of-ur-firstrow>
+    )
+);
+
+  * CREATE EXTERNAL FILE FORMAT: This statement is used to create an external file format, which defines the structure and properties of the data files that you will be
+                                 working with in Azure Synapse PolyBase or this specifies the structure and properties of the source data file that you will be
+                                 working with in Azure Synapse PolyBase
+
+  * <name-of-file-format>: You need to replace <name-of-file-format> with the desired name for your file format. Choose a name that represents the format and
+                           characteristics of your data files.
+
+  * FORMAT_TYPE: The FORMAT_TYPE parameter specifies the type of the external file format. You need to replace <format-type> with the actual format type you want to
+                 use. Some common format types include "DELIMITEDTEXT", "CSV", "PARQUET", "AVRO", etc., depending on the file format you are working with.
+
+  * FORMAT_OPTIONS: The FORMAT_OPTIONS section contains additional options and settings for the file format. It allows you to define various properties of the format.
+        
+       # FIELD_TERMINATOR: The FIELD_TERMINATOR option specifies the character or string used to delimit fields in the data file. You need to replace <delimiter> with
+                           the actual delimiter used in your data file, such as a comma (,), tab (\t), pipe (|), etc.
+
+       # FIRST_ROW: The FIRST_ROW option specifies the number of the first row that contains the actual data in the file. You need to replace 
+                    <specify-the-number-of-ur-firstrow> with the appropriate row number. This is useful if your file includes header rows or metadata that should be
+                    skipped during processing.
+
+
+
+               ----------------------------------------------------------------     **********        -------------------------------------------------------------
+
+
+
+CREATE EXTERNAL TABLE <table_name>
+(
+    <col-name> <datatype> <constraint>,
+    <col-name> <datatype> <constraint>,
+      :
+      :
+    <col-name> <datatype> <constraint>
+)
+WITH
+(
+    LOCATION = <location-of-table>,
+    DATA_SOURCE = <external-data-source-name>,
+    FILE_FORMAT = <external-file-format-name>
+)
+
+  * CREATE EXTERNAL TABLE: This statement is used to create an external table, which represents the structure and schema of the data stored in external data sources.
+    
+       # <table_name>: You need to replace <table_name> with the desired name for your external table. Choose a name that reflects the purpose or content of the table.
+         
+       # <col-name> <datatype> <constraint>: This section defines the columns of the external table. You need to replace <col-name>, <datatype>, and <constraint> with
+                                             the actual column names, data types, and constraints according to your data schema.
+
+       # LOCATION: The LOCATION parameter specifies the location of the external table. You need to replace <location-of-table> with the actual address or location
+                   where the data files for this table are stored in the external data source.
+ 
+       # DATA_SOURCE: The DATA_SOURCE parameter specifies the name of the external data source previously created using the CREATE EXTERNAL DATA SOURCE statement. You
+                      need to replace <external-data-source-name> with the actual name of the external data source associated with this table.
+
+       # FILE_FORMAT: The FILE_FORMAT parameter specifies the name of the external file format previously created using the CREATE EXTERNAL FILE FORMAT statement. You
+                      need to replace <external-file-format-name> with the actual name of the external file format associated with this table.
+
+  * By creating this external table, you define the structure, columns, and location of the data stored in the external data source. This allows you to query and access
+    the data in the external files as if it were a regular table within Azure Synapse. However, it's important to note that the data remains stored in the external
+    location and is accessed on-demand during query execution.
+
+                ----------------------------- -----------------------------------     **********     ------------------------------------------------------------
+
+SELECT TOP 10 * from polydemo
+
+  * Run the above query to check weather the data transformation has completed successfully or not
+
+                ----------------------------------------------------------------      **********     ------------------------------------------------------------
