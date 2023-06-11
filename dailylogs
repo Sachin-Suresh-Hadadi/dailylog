@@ -1,0 +1,285 @@
+ 
+
+########################### git-commands #######################
+
+
+* To check version             ---->  git version
+* To clone repository          ---->  git clone <git--url>
+* To check status              ---->  git status
+* To add to staginng area      ---->  git add <file name>  (or)  git add .      # "." to add all the files in taging area
+* To add only modified files 
+  leaving untracked files      ---->  git add -u
+* To stage all files           ---->  git add -A
+* To commit the file/change    ---->  git commit -m "<commit-message>"
+* To push to the remote repo   ---->  git push <remote-repo-name> <name-of-branch-to-push>
+* To start fresh git repo
+  in local/ initialise         ---->  git init 
+* To configure username        ---->  git config --global user.name "git_user_name"
+* To configure email           ---->  git config --global user.name "git_user_mail"
+* To list user                 ---->  git config --global --list    
+* To get all tracked files     ---->  git ls-files
+* To get logs of commits       ---->  git log (or) git log --abbrev-commit (or) git log --oneline --graph --decorate --all
+* To get a logs in between 2 
+  commits                      ----> git log <from_commit_id>...<to-commit-id>
+* To get commits happend in 
+  last n days                  ----> git log --since="<n> days ago"  # n= no of days
+* To get logs of a file        ----> git log -- <file_name>
+* To get log of renamed        ----> git log -- follow -- <file-path>
+* To show about specific commit ---> git show <commit-id>
+* To edit the commit message   ----> git commit --amend
+ 
+################## git workflow (push,pull) ####################
+
+* To pull from remote repo     ----> git pull <remote-repo-name> <name-of-branch-to-push>
+* To push to the remote repo   ----> git push <remote-repo-name> <name-of-branch-to-push>
+
+#################  tracking files    ##################
+
+* To add and commit the 
+  tracked file                 ----> git commit -am "<your-message>"   # trackerd file : These are the files previously commited to git
+
+############ backing out changes (undo,rename,move,delete)    ###################
+
+* To backout changes added to 
+  staging area                 ----> git reset HEAD <name-of-file>    # To unstage from staging area
+* To undo the changes made     ----> git checkout -- <file-name-to-undo-changes>  # this will undo the changes that have been made to a file after the last commit
+* To rename file using git     ----> git mv <source_file> <new-file-name>
+* To move file using git       ----> git mv <source_file_path> <destination_file_path> 
+* To remove tracked file       ----> git rm <file_to_remove>  # the specified file move from committed to staging area and commit to remove 
+* To undo delete staged file 
+  that is in staging area       ---> git reset HEAD <file_name> # the file will be added to git repo but will not be present in working directory to get it back in wd
+* To undo deleted file to 
+  working directory             ---> git checkout <filename>
+* To add deletetion done  
+  directley on working directory --> git add -A # If a staged file is removed/deleted directley from working directory, this will be in staging area, commit to 
+                                                  delete permenentley
+       
+#############  how to set up alias in git ###############
+
+* To create alias              ----> git config --global alias.<alias-name> "<operation-to-perform>" 
+                                     ## eg git config --global alias.history "log --all --oneline --graph --decorate"
+* To update alias              ----> nano ~/.gitconfig
+
+#############  comparing differences   #############
+
+* To get diff bw staging area 
+  and working directory        ----> git diff (or) git diff -- <file-name> # to get the difference of a specific file
+* To get diff bw last commit
+  and working directory        ----> git diff HEAD
+* To get diff bw staged and
+  and last commit              ----> git diff --staged HEAD
+* To get diff between committs ----> git diff <commit-id1> <comit-id2>
+* To compare b/w last 2 commit ----> git diff HEAD HEAD^
+* To get diff b/w branches     ----> git diff master origin/master
+
+###########  branching and merging    ########################
+
+* To list local branch         -----> git branch
+* To list all branches         -----> git branch -a ## list all local and remote 
+* To create a branch           -----> git branch <branch-name>-----------------------|
+                                                                                     |-----> to create and switch simontaniously ==> git checkout -b <branch-name>  
+* To switch branch             -----> git checkout <branch-name>---------------------|
+* To renmane branch            -----> git branch -m <old_name> <new_name>
+* To delete branch             -----> git branch -d <old_name> <new_name>
+* To merge                     -----> git merge <name-of-the-branch-to-merge> -m "<message>" ## merge with master/main branch and see difference beform merging
+* To merge without fast forword ----> git merge <name-of-the-branch-to-merge> --no-ff -m "<message>"
+* Merging conflict             -----> 
+ 
+#####################  rebeasing  ############################
+
+* To rebasing to main/master  ------> git rebase <branch-name> # aftre branching out, if u want to get all the updates/modifications from specified branch
+* To abort rebase if conflict 
+  is raised                   ------> git rebase --abort
+* To merge conflicts          ------> git mergetool --tool=<your_merge_tool_name>
+* To continue rebase after
+  solving conflicts           ------> git rebase --continue
+
+############   stashing   ######################
+
+* Stashing is like pausing, if we want to pause the curent working and work on something important, we can stach the process as it pauses and changes all the files
+  to previous commit
+* To stash/pause               -----> git stash 
+* To undo stash                -----> git stash apply
+* To list all stashes          -----> git stash list
+* To drop the stash            -----> git stash drop
+* To consider even untracked 
+  files                        -----> git stash -u
+* To combine both apply & drop -----> git stash pop
+* To save stash with message   -----> git stash save "<stash_message>"
+* To get info of specific stash ----> git stash show stash@{index_num}  # you will get index_num if you do "git stash list"\
+* To apply to a specific stash  ----> git stash apply stash@{index_num}
+* To drop a specific stash     -----> git stash drop stash@{index_num}
+* To delete all stashes        -----> git stash clear
+* To switch to new branch     ------> git stash branch <branch_name> # it will create & switch 2 new specified branch and drops the stash 
+
+###################  tagging  ############################
+
+* To create a tag             ------> git tag <tag_name> ##light-weight tag
+* To list tags                ------> git tag --list
+* To get info of tag          ------> git show <tag_name>
+* To delete tag               ------> git tag --delete <tag-name>
+* To create annotated tag     ------> git tag -a <tag-name> -m "<tag_message>" ## gives some more info than leight-weight tag
+* To diplay diff b/w tags     ------> git diff <first-tag> <second-tag>
+* To tagging specific commit  ------> git tag -a <tag-name> -m <tag-msg> <commit-id>
+* To update tags              ------> git tag -a <tag-name> -m <message> -f <correct-commit-id>
+* To push a specific tag to remote -> git push <remote-repo-name> <tag-name>
+* To push all tags to remote  ------> git push <remote_repo_name> <branch_name_2_push> --tags
+* To delete a tag in remote repo -->  git push <remote-repo-name> :<tag-name> ## delete tag from repo but will be present in local
+
+############################## reset,reflog and compare branches  ##########################################
+
+* To set head back to previous
+  nth commit                   ----> git reset HEAD^(n) git reset HEAD@{n} or   ## n specifies no of commits back u want to go to
+* To get history of all the 
+  reset commands              -----> git reflog
+* To change to a specific 
+  commit using commit id      -----> git reset <commit-id> ### u will get id by "git reflog"
+
+####################################### github actions and how to create and clone a repository through cli ###########################################
+
+* Login to github             ------> gh auth login
+* Create and clone a repo     ------> gh repo create <git-user-name>/<repo-name> --<public/private> -c  ## "-c" flag to clone the repo
+* To run the workflow from cli  ----> gh workflow run <action-filename>.yml
+* To list the workflows       ------> gh run list --workflow = <action-file-name>.yml  ## here you will get job id
+* To get logs from running job  ----> gh run view --log --job = <job-id> ## get job id from above command
+
+#######################################################################################################################################################################
+
+                                                                        AZURE POLYBASE
+
+#######################################################################################################################################################################
+
+
+
+ 
+
+
+
+               ----------------------------------------------------------------     **********        -------------------------------------------------------------
+CREATE MASTER KEY     
+
+  * The database master key is a symmetric key used to protect the private keys of certificates and asymmetric keys that are present in the database. When it is created
+    the master key is encrypted by using the AES_256 algorithm and a user-supplied password."
+
+               ----------------------------------------------------------------     **********        -------------------------------------------------------------
+
+CREATE DATABASE SCOPED CREDENTIAL <credential-scope-name>
+WITH  
+   IDENTITY = '<username>',
+   SECRET  = '<secret-key-of-source-account>'
+
+  * CREATE DATABASE SCOPED CREDENTIAL: This statement is used to create a database-scoped credential. A database-scoped credential is used to store and manage the
+                                       authentication information required to access external data sources or services.
+
+  * IDENTITY: The IDENTITY parameter specifies the identity or username associated with the credential, you can replace it with the actual identity or username required
+              for authentication.
+  * SECRET: The SECRET parameter is used to specify the secret or password associated with the credential.
+ 
+               ----------------------------------------------------------------     **********        -------------------------------------------------------------
+
+
+CREATE EXTERNAL DATA SOURCE <data-source-name>
+WITH
+(
+    TYPE = hadoop,
+    LOCATION = <location-of-the-data-source> , 
+    CREDENTIAL = <name-of-the-scoped-credential>
+)
+ 
+  * CREATE EXTERNAL DATA SOURCE: This statement is used to create an external data source, which represents a connection to an external data location or service
+                                 <data-source-name>: You need to replace <data-source-name> with the desired name for your external data source. Choose a name that
+                                 represents the data source you are connecting to.
+
+  * TYPE:     The TYPE parameter specifies the type of the external data source. In this case, it is set to "hadoop" which indicates that the data source is based on
+              Hadoop. However, depending on your specific scenario, you may need to use a different type such as "SQL Server", "Oracle", "Azure Blob Storage", or others,
+              depending on the data source you are connecting to.
+
+  * LOCATION: The LOCATION parameter specifies the location of the data source. You need to replace <location-of-the-data-source> with the actual address or location
+              of your data source.
+
+  * CREDENTIAL: The CREDENTIAL parameter specifies the name of the database-scoped credential that will be used for authentication when accessing the external data
+                source. You need to replace <name-of-the-scoped-credential> with the actual name of the credential you created earlier using the
+                "CREATE DATABASE SCOPED CREDENTIAL" statement as specified above.
+
+
+               ----------------------------------------------------------------     **********        -------------------------------------------------------------
+
+
+
+CREATE EXTERNAL FILE FORMAT <name-of-file-format>
+WITH
+(
+    FORMAT_TYPE = <format-typr>,
+    FORMAT_OPTIONS  (
+         FIELD_TERMINATOR = <delimitter>,
+         FIRST_ROW = <specify-the-number-of-ur-firstrow>
+    )
+);
+
+  * CREATE EXTERNAL FILE FORMAT: This statement is used to create an external file format, which defines the structure and properties of the data files that you will be
+                                 working with in Azure Synapse PolyBase or this specifies the structure and properties of the source data file that you will be
+                                 working with in Azure Synapse PolyBase
+
+  * <name-of-file-format>: You need to replace <name-of-file-format> with the desired name for your file format. Choose a name that represents the format and
+                           characteristics of your data files.
+
+  * FORMAT_TYPE: The FORMAT_TYPE parameter specifies the type of the external file format. You need to replace <format-type> with the actual format type you want to
+                 use. Some common format types include "DELIMITEDTEXT", "CSV", "PARQUET", "AVRO", etc., depending on the file format you are working with.
+
+  * FORMAT_OPTIONS: The FORMAT_OPTIONS section contains additional options and settings for the file format. It allows you to define various properties of the format.
+        
+       # FIELD_TERMINATOR: The FIELD_TERMINATOR option specifies the character or string used to delimit fields in the data file. You need to replace <delimiter> with
+                           the actual delimiter used in your data file, such as a comma (,), tab (\t), pipe (|), etc.
+
+       # FIRST_ROW: The FIRST_ROW option specifies the number of the first row that contains the actual data in the file. You need to replace 
+                    <specify-the-number-of-ur-firstrow> with the appropriate row number. This is useful if your file includes header rows or metadata that should be
+                    skipped during processing.
+
+
+
+               ----------------------------------------------------------------     **********        -------------------------------------------------------------
+
+
+
+CREATE EXTERNAL TABLE <table_name>
+(
+    <col-name> <datatype> <constraint>,
+    <col-name> <datatype> <constraint>,
+      :
+      :
+    <col-name> <datatype> <constraint>
+)
+WITH
+(
+    LOCATION = <location-of-table>,
+    DATA_SOURCE = <external-data-source-name>,
+    FILE_FORMAT = <external-file-format-name>
+)
+
+  * CREATE EXTERNAL TABLE: This statement is used to create an external table, which represents the structure and schema of the data stored in external data sources.
+    
+       # <table_name>: You need to replace <table_name> with the desired name for your external table. Choose a name that reflects the purpose or content of the table.
+         
+       # <col-name> <datatype> <constraint>: This section defines the columns of the external table. You need to replace <col-name>, <datatype>, and <constraint> with
+                                             the actual column names, data types, and constraints according to your data schema.
+
+       # LOCATION: The LOCATION parameter specifies the location of the external table. You need to replace <location-of-table> with the actual address or location
+                   where the data files for this table are stored in the external data source.
+ 
+       # DATA_SOURCE: The DATA_SOURCE parameter specifies the name of the external data source previously created using the CREATE EXTERNAL DATA SOURCE statement. You
+                      need to replace <external-data-source-name> with the actual name of the external data source associated with this table.
+
+       # FILE_FORMAT: The FILE_FORMAT parameter specifies the name of the external file format previously created using the CREATE EXTERNAL FILE FORMAT statement. You
+                      need to replace <external-file-format-name> with the actual name of the external file format associated with this table.
+
+  * By creating this external table, you define the structure, columns, and location of the data stored in the external data source. This allows you to query and access
+    the data in the external files as if it were a regular table within Azure Synapse. However, it's important to note that the data remains stored in the external
+    location and is accessed on-demand during query execution.
+
+                ----------------------------- -----------------------------------     **********     ------------------------------------------------------------
+
+SELECT TOP 10 * from polydemo
+
+  * Run the above query to check weather the data transformation has completed successfully or not
+
+                ----------------------------------------------------------------      **********     ------------------------------------------------------------
