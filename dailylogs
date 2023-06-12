@@ -143,17 +143,41 @@
 * To list the workflows       ------> gh run list --workflow = <action-file-name>.yml  ## here you will get job id
 * To get logs from running job  ----> gh run view --log --job = <job-id> ## get job id from above command
 
+
+#######################################################################################################################################################################
+
+                                                                       AZURE SQL
+#######################################################################################################################################################################
+
+  * How to create a table
+
+CREATE EXTERNAL TABLE <table_name>
+(
+    <col-name> <datatype> <constraint>,
+    <col-name> <datatype> <constraint>,
+      :
+      :
+    <col-name> <datatype> <constraint>
+)
+
+
+  * How to insert value to table
+
+INSERT INTO <TABLE-NAME> ( <col-name>, <col-name>) VALUES ( value1,value2)
+
+  * How to create a table as CTAS
+ 
+CREATE TABLE <destinatio-tablename>
+AS
+SELECT * FROM <SOURCE-TABLE-NAME> WHERE <condition>
+
+
+
 #######################################################################################################################################################################
 
                                                                         AZURE POLYBASE
 
 #######################################################################################################################################################################
-
-
-
- 
-
-
 
                ----------------------------------------------------------------     **********        -------------------------------------------------------------
 CREATE MASTER KEY     
@@ -283,3 +307,98 @@ SELECT TOP 10 * from polydemo
   * Run the above query to check weather the data transformation has completed successfully or not
 
                 ----------------------------------------------------------------      **********     ------------------------------------------------------------
+
+
+########################################################################################################################################################################
+
+                                                                           AZURE DATABRICKS                                                                            
+
+########################################################################################################################################################################
+
+
+---------------------------------------------------------   storing the secrets inside a scope in databricks ------------------------------------------------------------
+  
+ ** Secrets in databricks are stored in a database and can be accessed in notebooks without hardcoding the values.
+     
+    The process of storing the secrets inside database is done through databricks cli and commands are listed below
+    
+    ! Install the Databricks CLI: pip install databricks-cli
+    
+    ! Verify the installation   : databricks --version
+
+    ! 
+   
+
+    These secrets stored inside database in azuere databricks can be managed through azure portal through key-vaults
+    for more and clear info  --------------> https://www.youtube.com/watch?v=9VzBS4OiP_A
+
+    
+
+------------------------------------------------------------ To mount data from storage account to databricks ----------------------------------------------------------
+
+# Mount Azure Blob storage to a specific location in Databricks file system
+storage_account_name = "<your_storage_account_name>"
+storage_account_access_key = "<your_storage_account_access_key>"
+container_name = "<your_container_name>"
+mount_point = "/mnt/<folder-name-to-mount-data>"
+
+dbutils.fs.mount(
+  source=f"wasbs://{container_name}@{storage_account_name}.blob.core.windows.net",
+  mount_point=mount_point,
+  extra_configs={
+    f"fs.azure.account.key.{storage_account_name}.blob.core.windows.net": storage_account_access_key
+  }
+)
+
+# Read data from mounted Azure Blob storage
+file_path = f"{mount_point}/<source-file-name>"
+df = spark.read.format("csv").option("header", "true").load(file_path)
+
+# Perform data processing or analysis
+# For example, display the data
+df.show()
+
+# Unmount Azure Blob storage from Databricks file system
+dbutils.fs.unmount(mount_point)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
