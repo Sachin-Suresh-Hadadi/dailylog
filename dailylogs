@@ -1,10 +1,26 @@
  
+###########################  enable ssh-authentcation ###############
+* To enable ssh-authentication , first create an ssh keys 
+  $ ssh-keygen -t rsa
 
-########################### git-commands #######################
+* After creating successfully, from user directory, open the .ssh folder
+  $ cd .ssh
+  
+* lookout for "id_rsa.pub" file and copy the contents of the file
+
+* Login to github through UI and under settings clickk for SSH AND GPG keys on left hand bar
+
+* Click on New SSH key , provide the title and paste the copied content in the space provided under key and click on Add SSH key
 
 
-* To check version             ---->  git version
+########################### basi-git-commands #######################
+
+* To install git               ---->  sudo apt install git
+* To ckeck the version         ---->  git version
+* To configure username        ---->  git config --global user.name "git_user_name"
+* To configure email           ---->  git config --global user.name "git_user_mail"
 * To clone repository          ---->  git clone <git--url>
+* To add a remote repo         ---->  git remote add <remote-repo-name> <url-of-source-repo>
 * To check status              ---->  git status
 * To add to staginng area      ---->  git add <file name>  (or)  git add .      # "." to add all the files in taging area
 * To add only modified files 
@@ -27,6 +43,8 @@
 * To get log of renamed        ----> git log -- follow -- <file-path>
 * To show about specific commit ---> git show <commit-id>
 * To edit the commit message   ----> git commit --amend
+
+
  
 ################## git workflow (push,pull) ####################
 
