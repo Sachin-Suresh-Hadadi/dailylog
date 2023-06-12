@@ -43,6 +43,10 @@
 * To get log of renamed        ----> git log -- follow -- <file-path>
 * To show about specific commit ---> git show <commit-id>
 * To edit the commit message   ----> git commit --amend
+* To change url from https to ssh -> git remote set-url origin <--link/url-->
+* To rename the repo as in remote 
+  repo                          ---> git remote set-url origin <--link/url-->
+
 
 
  
