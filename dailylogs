@@ -344,12 +344,28 @@ SELECT TOP 10 * from polydemo
      
     The process of storing the secrets inside database is done through databricks cli and commands are listed below
     
-    ! Install the Databricks CLI: pip install databricks-cli
+    ! Install the Databricks CLI: pip3 install databricks-cli
     
     ! Verify the installation   : databricks --version
 
-    ! 
+    ! Configure the databricks  : databricks configure token  ## here it will ask for url and access token
+    
+    ! Create a scope            : databricks secrets create-scope --scope <scope-name>
+    
+    ! To list the scopes        : databricks secrets list-scopes
+    
+    ! To add a secret to scope  : databricks secrets put --scope <scope-name> --key <name-of-secret> ## it will open file, store ur secret value in it
    
+    ! To list all secrets stored : databricks  secrets list --scope <scope-name>
+    
+    ! To list the users who can
+      access the scope          : databricks secrets list-acls --scope <scope-name>
+      
+    ! To add user to access 
+      secret in a scope        : databricks secrets put-acls --scope <scope-name> --principal <azure-ad-username> --permission <READ>
+                                 ## you should have certain permission to perform the operation
+                                   
+ 
 
     These secrets stored inside database in azuere databricks can be managed through azure portal through key-vaults
     for more and clear info  --------------> https://www.youtube.com/watch?v=9VzBS4OiP_A
@@ -383,10 +399,32 @@ df.show()
 # Unmount Azure Blob storage from Databricks file system
 dbutils.fs.unmount(mount_point)
 
+---------------------------------------------------------- mount data from dbfs to blob storage -----------------------------------------------------
 
+result.write.format("csv").mode("overwrite").
+      option("fs.azure.account.key.<storage_account_name>.blob.core.windows.net", "<storage_account_access_key>").
+      save("wasbs://<container_name>@<storage_account_name>.blob.core.windows.net/<destinamtio-file-name>")
 
+---------------------------------------------   to create a temporary view of the mounted csv file ---------------------------------------------------
 
+%sql
+CREATE OR REPLACE TEMPORARY VIEW <temp-table-name>
+USING csv
+OPTIONS (
+  path "/mnt/<source-file-path>",
+  header "true"
+);
 
+----------------------------------------------       extracting a table out of temporary view  -------------------------------------------------------
+
+CREATE TABLE <table-name>
+AS
+SELECT * FROM <temporary-table-name> WHERE <condition>
+
+#### how to store output of a query to variable 
+
+result = spark.sql("select count(*) from <table-name>")
+result.show() ## to display the data
 
 
 
