@@ -18,7 +18,7 @@
 * To install git               ---->  sudo apt install git
 * To ckeck the version         ---->  git version
 * To configure username        ---->  git config --global user.name "git_user_name"
-* To configure email           ---->  git config --global user.name "git_user_mail"
+* To configure email           ---->  git config --global user.email "git_user_mail"
 * To clone repository          ---->  git clone <git--url>
 * To add a remote repo         ---->  git remote add <remote-repo-name> <url-of-source-repo>
 * To check status              ---->  git status
@@ -427,18 +427,205 @@ result = spark.sql("select count(*) from <table-name>")
 result.show() ## to display the data
 
 
+#######################################################################################################################################################
+
+                                                               Azure Monitor Api
+
+#######################################################################################################################################################
+
+Q) Write a python code that interacts with Azure Monitor APIs and pulls the last one month metrics(all metrics) of an AAS. And send the response over
+the mail using SMTP in tabular form.
+
+ Retrieve metric definitions, dimension values, and metric values using the Azure Monitor API and use the data in your applications, or store in a 
+ database for analysis. You can also list alert rules and view activity logs using the Azure Monitor API.
+ 
+ To retrive metrics azure monitor api u should have token first, to generate token follow the steps:
+
+step-1: first register a app in azure active directory 
+        https://learn.microsoft.com/en-us/azure/azure-monitor/logs/api/register-app-for-token?tabs=portal
+        
+                             
+step-2: You have to give permission for the application that u have created above to retrive the metrics.
+        # To give permission select the resource that u want to retrive the metrics from from "all resources" in azure portal and follow the
+        documentation
+        https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-store-custom-rest-api
+
+Now u can generate the token and access the metrics from the selected resources
 
 
+----------------------------------------------------------------- python code to fetch metrics ------------------------------------------------------
+
+import requests,json
+import os,smtplib,ssl
+from re import findall
+from email.message import EmailMessage
+
+Subscription=os.getenv('SUBSCRIPTION')
+ClintId=os.getenv('CLINTID')
+TenantId=os.getenv('TENANTID')
+Value=os.getenv('VALUE')
+SecretId=os.getenv('SECRETID')
+resouce_provider_namespace="Microsoft.AnalysisServices"
+resource_type="servers"
+aas_name = "sachinanalytics"
+api_version="2018-01-01"
+resource_group="sorryimlate"
 
 
+def get_token():
+  url=f"https://login.microsoftonline.com/{TenantId}/oauth2/token"
+  headers={'Content-Type':'application/x-www-form-urlencoded'}
+  data={
+    "grant_type":'client_credentials',
+    'client_id':f'{ClintId}',
+    'client_secret':f'{Value}',
+    'resource':'https://management.azure.com'
+  }
+  response = requests.post(url, headers=headers, data=data)
+  return response
 
 
+responce=get_token()
+token = responce.json()["access_token"]
+
+with open("result.txt",'w') as file:
+    file.write("Metric name    |    Timestamp            |   memory_usage  \n")
+
+metrics=['qpu_metric', 'memory_metric', 'private_bytes_metric', 'virtual_bytes_metric', 'TotalConnectionRequests', 'SuccessfullConnectionsPerSec',
+'TotalConnectionFailures', 'CurrentUserSessions', 'QueryPoolBusyThreads', 'CommandPoolJobQueueLength', 'ProcessingPoolJobQueueLength',
+'CurrentConnections', 'CleanerCurrentPrice', 'CleanerMemoryShrinkable', 'CleanerMemoryNonshrinkable', 'MemoryUsage', 'MemoryLimitHard',
+'MemoryLimitHigh', 'MemoryLimitLow', 'MemoryLimitVertiPaq', 'Quota', 'QuotaBlocked', 'VertiPaqNonpaged', 'VertiPaqPaged', 'RowsReadPerSec', 
+'RowsConvertedPerSec', 'RowsWrittenPerSec', 'CommandPoolBusyThreads', 'CommandPoolIdleThreads', 'LongParsingBusyThreads', 'LongParsingIdleThreads', 
+'LongParsingJobQueueLength', 'ProcessingPoolBusyIOJobThreads', 'ProcessingPoolBusyNonIOThreads', 'ProcessingPoolIOJobQueueLength',
+'ProcessingPoolIdleIOJobThreads', 'ProcessingPoolIdleNonIOThreads', 'QueryPoolIdleThreads', 'QueryPoolJobQueueLength', 'ShortParsingBusyThreads',
+'ShortParsingIdleThreads', 'ShortParsingJobQueueLength', 'memory_thrashing_metric', 'mashup_engine_qpu_metric', 'mashup_engine_memory_metric', 
+'mashup_engine_private_bytes_metric', 'mashup_engine_virtual_bytes_metric']
+
+for metric in metrics:
+  
+  
+  dimension_url=f'https://management.azure.com/subscriptions/{Subscription}/resourceGroups/{resource_group}/providers/{resouce_provider_namespace}/
+                  {resource_type}/{aas_name}/providers/microsoft.insights/metrics?api-version=2019-07-01&metricnames={metric}&
+                  timespan=2023-06-21T10:30:00Z/2023-06-22T11:00:00Z&aggregation=Total&interval=PT1M'
+  headers = {
+    "Authorization": f"Bearer {token}",
+    "Content-Type": "application/json",
+    "Host": "management.azure.com"
+     }
+  dimensions=requests.get(dimension_url,headers=headers)
+  metric_dimensions=dimensions.json()['value'][0]['timeseries'][0]['data']
+
+  with open("result.txt",'a') as file:
+
+    for item in metric_dimensions:
+        if 'total' in item.keys():
+            file.write(f"{metric} | {item['timeStamp']} | {item['total']}\n")
+        else:
+            file.write(f"{metric} | {item['timeStamp']} |      NA   \n")
+
+From='sachin.hs@sigmoidanalytics.com'
+To='sachinshadadi@gmail.com'
+password=os.getenv('SMTPPASSWD')
+
+em=EmailMessage()
+em['From']='sachin.hs@sigmoidanalytics.com'
+em['To']='sachinshadadi@gmail.com'
+em['Subject']="monthley metrics"
+
+with open('result.txt') as file:
+  email=file.read()
+  em.set_content(email)   
+
+context=ssl.create_default_context()
+with smtplib.SMTP_SSL('smtp.gmail.com',465,context=context) as smtp:
+    smtp.login(From,password)
+    smtp.sendmail(From,To,em.as_string())
 
 
+-------------------------------------------------------------------------------------------------------------------------------------------------------
 
+#######################################################################################################################################################
 
+                                                                     Cluster policy creation 
 
+#######################################################################################################################################################
 
+Q)Create a cluster policy to enforce below limitations -
+1. No. of worker - min - 1 max - 2
+2. Only allowed runtime  - 7.3.x-scala2.12
+3. Autotermination and spot instance must be selected
+4. A user can only launch one cluster
+5.  Only allowed node types are - Standard_DS3_v2 and Standard_D3_v2
+6. tag (team => devops) is a must
+7. DBU hour must not increase 100
+Write a python code to programmatically assign the above-created policy to  adb
+
+Note - Upload both the files i.e. JSON and python files.
+
+-------------------------------------------------------------  .json file------------------------------------------------------------------------------
+{
+  "name": "ExamplePolicy",
+  "definition": {
+        "cluster_name": "my-cluster",
+        "num_workers": {
+          "type": "range",
+          "minValue": 1,
+          "maxValue" : 2
+       },
+       "spark_version": {
+          "type": "fixed",
+          "defaultValue": "7.3.x-scala2.12"
+       },
+       "maxClustersPerUser": {
+        "type": "fixed",
+        "value": 1
+       },
+     "autotermination_minutes": {
+          "type": "fixed",
+          "value": 30,
+          "hidden": true
+       },
+       "node_type_id": {
+        "type": "allowlist",
+        "values": [
+          "Standard_DS3_v2",
+          "Standard_D3_v2"
+        ],
+        "defaultValue": "Standard_DS3_v2"
+      },
+      "custom_tags.team": {
+        "type": "fixed",
+        "value": "devops"
+      },
+      "dbus_per_hour": {
+        "type": "range",
+        "maxValue": 100
+      },
+      "spot": {
+        "enabled": true
+      }
+  }
+}
+
+-------------------------------------------------------------------------------- .py file ------------------------------------------------------------
+
+import json,requests
+
+Host='https://community.cloud.databricks.com/?o=3327665337570993#'
+host_token='host_token'
+
+with open ("cluster.json","r") as file:
+    cluster=json.load(file)
+    #print(type(cluster))
+
+data=(json.dumps(cluster))
+#print((data))
+
+headers={
+    "Authorization': f'Bearer {host_token}"
+}
+
+requests.post(f"{Host}/api/2.0/policies/clusters/create",json=data)
 
 
 
