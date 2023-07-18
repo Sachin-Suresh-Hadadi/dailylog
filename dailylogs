@@ -1,4 +1,11 @@
- 
+ ##########################   docker instalation using conventional script ###############################
+
+link for documentation     ----> https://docs.docker.com/engine/install/ubuntu/#install-using-the-convenience-script 
+
+* To login to docker hub   ----> docker login
+* To build a image         ----> docker build . -f <docker-file-name> -t <docker-username>/<app-name>
+* To push to docker hub    ----> docker push <docker-file-name> -t <docker-username>/<app-name>
+
 ###########################  enable ssh-authentcation ###############
 * To enable ssh-authentication , first create an ssh keys 
   $ ssh-keygen -t rsa
