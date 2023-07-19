@@ -635,6 +635,17 @@ headers={
 
 requests.post(f"{Host}/api/2.0/policies/clusters/create",json=data)
 
+-----------------------------------------------------------  AZURE KUBERNETES SERVICE ----------------------------------------------
+
+* To oen the shell terminal          ------> shell.azure.com
+* To generate credentials 4 login    ------> az aks get-credentials --resource-group <rg-name> --name <cluster-name>
+                                             # it will create a kubeconfig file and store the credentials in home/<usename>/.kube/config
+* To get all nodes                   ------> kubectl get nodes -o wide
+* To get namespaces                  ------> kubectl get namespaces (or) kubectl get ns
+* To get all the workloads           ------> kubectl get pods --all-namespaces
+* To get all namespaces              ------> kubectl get all --all-namespaces
+
+
 
 
 
