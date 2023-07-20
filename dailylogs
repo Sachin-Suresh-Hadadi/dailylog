@@ -715,3 +715,35 @@ requests.post(f"{Host}/api/2.0/policies/clusters/create",json=data)
 # Ingress                                   -----> An advanced load balancer provide content path based routing (ssl,ssl redirect--etc)
 # externalName                              -----> To access external hosted apps in k8s cluster (eg; access aws RDS DATABASE endpoint by an app in k8s cluster)
 
+------------------------------------------------  yaml basics -------------------------------------------------------------------------------
+
+name: sachin                     -------->  {"name":"sachin"}
+person:
+    name: sachin                 
+    age: 24                      --------> {"person":{"name":"sachin", "age":24}}
+    hobies:
+      - cycling
+      - coocking                 --------> {"person":{"name":"sachin", "age":24, "hobies":["cycling", "coocking"]}}
+    friends:
+      - name: souvik
+        age: 24
+      - name: ankit              --------> {"person":{"name":"sachin", "age":24, "hobies":["cycling", "coocking"], "friends":[{"name":"souvik", "age":24}, {"name":"ankit", "age": 24}]}}
+        age: 24
+
+---  ##  yaml seperator
+
+# second object 
+name: ankit                     -------->  {"name":"ankit"}
+person:
+    name: ankit                
+    age: 24                      --------> {"person":{"name":"ankit", "age":24}}
+    hobies:
+      - cycling
+      - coocking                 --------> {"person":{"name":"ankit", "age":24, "hobies":["cycling", "coocking"]}}
+    friends:
+      - name: souvik
+        age: 24
+      - name: ankit              --------> {"person":{"name":"ankit", "age":24, "hobies":["cycling", "coocking"], "friends":[{"name":"souvik", "age":24}, {"name":"ankit", "age": 24}]}}
+        age: 24
+
+      
