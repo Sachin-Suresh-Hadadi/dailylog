@@ -4,7 +4,19 @@ link for documentation     ----> https://docs.docker.com/engine/install/ubuntu/#
 
 * To login to docker hub   ----> docker login
 * To build a image         ----> docker build . -f <docker-file-name> -t <docker-username>/<app-name>
-* To push to docker hub    ----> docker push <docker-file-name> -t <docker-username>/<app-name>
+* To push to docker hub    ----> docker push <docker-username>/<app-name>
+* To see runnning containers --> docker ps
+* To list all stoped &running -> docker ps -a
+* To get container id      ----> docker ps -a -q
+* To start container       ----> docker start <cont-id>
+* To connect to containe   ----> docker exec -it <cont-name> /bin/sh
+* To stop container        ----> docker stop <cont-name>
+* To remove container      ----> docker rm   <cont-name>
+* To remove image          ----> docker rmi  <image-name> or docker rmi -f <image-name> ## -f for remove forcefully
+* To add tag to image      ----> docker tag  <docker-hub-id>/<image-name>:<tag-name>
+* To push newly tagged image --> docker push <docker-hub-id>/<image-name>:<tag-name>
+* To display livestats     ----> docker stats
+
 
 * django project 2 docker  ----> https://www.youtube.com/watch?v=W5Ov0H7E_o4
 ######################### ##  enable ssh-authentcation ###############
@@ -638,33 +650,68 @@ requests.post(f"{Host}/api/2.0/policies/clusters/create",json=data)
 -----------------------------------------------------------  AZURE KUBERNETES SERVICE ----------------------------------------------
 
 * To oen the shell terminal          ------> shell.azure.com
+* To install azure cli in local      ------> az aks install-cli
 * To generate credentials 4 login    ------> az aks get-credentials --resource-group <rg-name> --name <cluster-name>
                                              # it will create a kubeconfig file and store the credentials in home/<usename>/.kube/config
-* To get all nodes                   ------> kubectl get nodes -o wide
+* To get all nodes                   ------> kubectl get nodes -o [ wide | yaml ] #yaml to get info in yaml format
 * To get namespaces                  ------> kubectl get namespaces (or) kubectl get ns
+* To deploy app on cluster           ------> kubectl run <name> --image <username>/imagename:<tag>
+* To deploy an image                 ------> kubectl apply -f <file-name>
 * To get all the workloads           ------> kubectl get pods --all-namespaces
 * To get all namespaces              ------> kubectl get all --all-namespaces
+* To get the pods                    ------> kubectl get pods -o wide
+* To get addition/discribe info      ------> kubectl describe pod <podname>
+* To get the service                 ------> kubectl get svc
+* To get the url                     ------> minikube service <service-name> --url
+* To delete the pod                  ------> kubectl delete pod <pod-name>
+* To delete service                  ------> kubectl delete service/<service-name>
+* To delete replicaset               ------> kubectl delete rs/<replica-set-name>
+* To create a service directley      ------> kubectl expose pod <pod-name>  --type=LoadBalancer --port=<port> --name=<service-name>
+* To get the logs of pod             ------> kubectl logs <pod-name>
+* To get the stream logs             ------> kubectl logs -f <pod-name>
+* To connect to container in pod     ------> kubectl exec -it <pod-name> -- /bin/bash
+* To interact without entering pod   ------> kubectl exec -it <pod-name> -- <command> ##for eg : ls, pwd etc...
 
+--------------------------------------------- replica set ----------------------------------------------------
 
+* To get the replicaset info         ------> kubectl get [ replicaset | rs ]
+* To descrive replicaset             ------> kubectl describe [ rs | replicaset ] <replicaset-name>
+* Expose replicaset as a service     ------> kubectl expose rs <replica-name> --type=LoadBalancer --port=80 --target-port=8080 --name=<service name>
+* To increse the replicas through yaml
+  file and to replace those changes  ------> kubectl replace -f <replics-file-name>
 
+------------------------------------------------- deployment -------------------------------------------------------
+* To deploy an image as a deployment ------> kubectl create deployment <deployment-name> --image=<repo-name>/<imagename>:<tag>
+* To scale the replicas of deployment -----> kubectl scale --replicas=<number> deployment/<deployment-name>
+* To get info of deployment           -----> kubectl get deploy <deployment> -o [ wide | yaml ]
 
+---------------------------------------------- to rollout to different version -----------------------------------------------------------
 
+* To change the version of image      -----> kubectl set image deployment/<deployment-name> <container-name>=<new-image-name>  --record=true
+                                               # to get the conainer name try " kubectl get deploy <deployment> -o yaml" and look for spec.containers.name
+* To edit deployment through edit 
+   deployment file                    -----> kubectl edit deployment/<deployment-name> --record=true
+* To get previous version changes made ----> kubectl rollout history deployment/<deployment-name>  # gives u the history of previous roll outs
 
+--------------------------------------------------- to rollback to previous version of deployment ------------------------------------------------
 
+* To check the roll out history         -----> kubectl rollout history deployment/<deployment-name>
+* To verify the changes made            -----> kubectl rollout history deployment/<deployment-name> --revision=<number> 
+* To rollback to previous version       -----> kubectl rollout undo deployment/<deployment-name>
+* To rollback to specific version       -----> kubectl rollout undo deployment/<deployment-name> --to-revision=<number>
 
+---------------------------------------------------------- pause and resume deployments  ------------------------------------------------------
 
+* To pause the deployment              -----> kubectl rollout pause deployment/<deployment-name>
+* To make any updates or set resources -----> kubectl set resource deployment/<deployment-name> -c=<container0-name> --limits=cpu=20m,memory=30Mi
+* To resume the deployment             -----> kubectl rollout resume deployment/<deployment-name>
 
+----------------------------------------------------- services ----------------------------------------------------------------------
 
-
-
-
-
-
-
-
-
-
-
-
-
+# Available services                        -----> ClusterIP, NodePort, LoadBalancer, Ingress, externalName
+# clusterip                                 -----> used for communcation b/w app inside cluster (front and backend)
+# NodePort                                  -----> used to access app outside the k8s cluster 
+# LoadBalancer                              -----> Primarily to cloud providers for integrate with load balancer
+# Ingress                                   -----> An advanced load balancer provide content path based routing (ssl,ssl redirect--etc)
+# externalName                              -----> To access external hosted apps in k8s cluster (eg; access aws RDS DATABASE endpoint by an app in k8s cluster)
 
