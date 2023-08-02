@@ -907,7 +907,7 @@ rdd6.saveAsTextFile('any')
       
   !!! NOTE : COMMANDS ARE WRITTEN IN MONGODB SHELL !!! 
                                                         |---> db.<collection-name>.insertOne({<keyname1>:<value1>,<keyname2>:<value2>})
-# To create a collecton in databese use the syntax   ---|
+# To create a collecton in database use the syntax   ---|
                                                         |---> db.<collection-name>.insertMany([{<keyname1>:<value1>},{<keyname2>:<value2>},{<keyname3>:<value3>,{<keyname4>:<value4>}])
 
      * insertOne() is used when we want to insert a single document to a collecton
@@ -922,4 +922,57 @@ rdd6.saveAsTextFile('any')
 
 -------------- Update ---------------------
 
-#
+# To modify the single document in a collection  -----> db.<collection-name>.updateOne( {<feildName>: <Value>},{ $set : {<field-name>: <new-value>},$currentDate : {lastmodified: true}})
+                                                                                         ----------|-----------        --------------|--------------
+                                                                                                   |                                 |
+                                                                                (To identify the DOCUMENT that need to change)     (To select and update the new-value)   
+                                                                                                    |                                |
+                                                                                        ------------|---------          -------------|--------------
+# To modify the single document in a collection  -----> db.<collection-name>.updateMany( {<feildName>: <Value>},{ $set : {<field-name>: <new-value>},$currentDate : {lastmodified: true}})
+   
+      * Uses the  $set operator to update the value of the plot field for the movie Twilight.
+      * Uses the $currentDate voperator to update the value of the lastUpdated field to the current date. If lastUpdated field does not exist, it will create.
+
+--------------- delete ---------------------
+
+* To delete a single collection                 ------> db.<collection-name>.deleteOne( {<field-name> : <value>} ) 
+                                                                                        -------------|------------
+                                                                                                     |
+                                                                                      (Identifier to delete a selected value)
+                                                                                                     |
+                                                                                          -----------|-------------           
+* To delete multiple collection                 ------> db.<collection-name>.deleteMany( {<field-name> : <value>} )
+
+* To dlete all tehe values                      ------> db.<collection-name>.deleteMany( {} )
+
+
+----------------- operators ----------------
+* Comparison operators:
+   
+     * Equal to                 ------> db.users.find({ age: { $eq: 30 } })
+     * Notequal to              ------> db.users.find({ age: { $ne: 30 } })
+     * Greaer than              ------> db.users.find({ age: { $gt: 30 } })
+     * Greaer than equal to     ------> db.users.find({ age: { $gte: 30 } })
+     * Lesser than              ------> db.users.find({ age: { $lt: 30 } })
+     * Lesser than equal to     ------> db.users.find({ age: { $lte: 30 } })
+
+* Logical Oprators
+    
+     * $and: Joins query clauses with a logical AND. ----> db.users.find({ $and: [{ age: { $gte: 25 } }, { age: { $lte: 35 } }] })
+     * $or: Joins query clauses with a logical OR.   ----> db.users.find({ $or: [{ age: { $lt: 25 } }, { age: { $gt: 35 } }] })
+     * $not: Inverts the result of a query.          ----> db.users.find({ age: { $not: { $eq: 30 } } })
+
+* Array Operators:
+
+     * $in: Matches any of the values specified in an array.         ----> db.users.find({ hobbies: { $in: ["reading", "cooking"] } })
+     * $nin: Matches none of the values specified in an array.       ----> db.users.find({ hobbies: { $nin: ["gaming", "swimming"] } })
+     * $all: Matches arrays that contain all the specified elements. ----> db.users.find({ hobbies: { $all: ["reading", "cooking"] } })
+     * $elemMatch: Matches documents that contain an array element   ----> db.users.find({ hobbies: { $elemMatch: { $eq: "reading", $ne: "cooking" } } }) 
+       that matches all the specified criteria.
+    
+* Update Operators:
+  
+     * $set: Sets the value of a field in an update operation.     ----> db.users.updateOne({ _id: ObjectId("12345") }, { $set: { age: 31 } })
+     * $unset: Removes a field from a document.                    ----> db.users.updateOne({ _id: ObjectId("12345") }, { $unset: { address: "" } })
+     * $inc: Increments the value of a field by a specified amount.----> db.users.updateOne({ _id: ObjectId("12345") }, { $inc: { age: 1 } })
+     * $push: Adds an element to an array.                         ----> db.users.updateOne({ _id: ObjectId("12345") }, { $push: { hobbies: "painting" } })
