@@ -1,4 +1,8 @@
- ##########################   docker instalation using conventional script ###############################
+ ################################                                Basic linux commands                    ################################################
+ 
+ # To check the configuration         ----------->   lsb_release -a (or) cat /etc/*release (or) lsb_release -dc
+ 
+ #####################################################   docker instalation using conventional script #################################################
 
 link for documentation     ----> https://docs.docker.com/engine/install/ubuntu/#install-using-the-convenience-script 
 
@@ -746,4 +750,146 @@ person:
       - name: ankit              --------> {"person":{"name":"ankit", "age":24, "hobies":["cycling", "coocking"], "friends":[{"name":"souvik", "age":24}, {"name":"ankit", "age": 24}]}}
         age: 24
 
-      
+
+---------------------------------------------------------------------------  pyspark  -------------------------------------------------------------------------
+
+# installing/downloading the required packages
+ 
+!apt-get install openjdk-8-jdk-headless -qq > /dev/null
+!wget -q http://archive.apache.org/dist/spark/spark-3.1.1/spark-3.1.1-bin-hadoop3.2.tgz
+!tar xf spark-3.1.1-bin-hadoop3.2.tgz
+!pip install -q findspark
+
+# creating a pyspark object or a spark session (spark context)
+
+import os
+os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-8-openjdk-amd64"
+os.environ["SPARK_HOME"] = "/content/spark-3.1.1-bin-hadoop3.2"
+import findspark
+findspark.init()
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.master("local[*]").getOrCreate() 
+
+# master -->  If you are running it on the cluster you need to use your master name as an argument to master().
+# Use local[x] when running in Standalone mode. x should be an integer value and should be greater than 0, x value should be the number of CPU cores you have.
+# appName() – Used to set your application name.
+#getOrCreate() – This returns a SparkSession object if already exists, and creates a new one if not exist.
+
+#------------------------------------------------------------------- creating an rdd ------------------------------------------------------------------------#
+
+# PySpark RDD Operations
+  # RDD transformations – Transformations are lazy operations, instead of updating an RDD, these operations return another RDD.
+  # RDD actions – operations that trigger computation and return RDD values.
+
+# Create RDD using sparkContext.parallelize()
+  
+  #  This function loads the existing collection from your driver program into parallelizing RDD. This is a basic method to create RDD and is used when you 
+  #  already have data in memory that is either loaded from a file or from a database. and it required all data to be present on the driver program prior to 
+  #  creating RDD.
+  
+data = [1,2,3,4,5,6,7,8,9,10,11,12]
+rdd=spark.sparkContext.parallelize(data)
+
+
+#Create RDD from external Data source (using sparkContext.textFile())
+rdd2 = spark.sparkContext.textFile("/path/textFile.txt")
+
+
+# Create RDD using sparkContext.wholeTextFiles()
+  # wholeTextFiles() function returns a PairRDD with the key being the file path and value being file content.
+rdd3 = spark.sparkContext.wholeTextFiles("/path/textFile.txt")
+
+
+# Creates empty RDD with no partition    
+rdd = spark.sparkContext.emptyRDD 
+# rddString = spark.sparkContext.emptyRDD[String]
+
+
+#Create empty RDD with partition
+rdd2 = spark.sparkContext.parallelize([],10) #This creates 10 partitions
+
+################### shuffel  in rdd ########################
+
+# getNumPartitions() – This a RDD function which returns a number of partitions our dataset split into.
+   # eg --> print("initial partition count:"+str(rdd.getNumPartitions()))
+   
+# repartition() method which shuffles data from all nodes also called full shuffle 
+   # eg ---> reparRdd = rdd.repartition(4)
+
+# coalesce() method which shuffle data from minimum nodes, for examples if you have data in 4 partitions and doing coalesce(2) moves data from just 2 nodes.
+
+# 
+################################## Rdd transformations #########################
+
+# For practice download/copy test.txt file from a git repo --> https://github.com/spark-examples/spark-scala-examples/blob/master/src/main/resources/test.txt
+
+#1 create a rdd
+rdd = spark.sparkContext.textFile("path/to/test.txt") 
+# This will conver the entire file into a list of strings, where each string is a line in a file 
+
+#2 To read the contents of rdd
+print(rdd.collect())
+
+#2 flatMap() -->  It splits each record by space in an RDD and finally flattens it. Resulting RDD consists of a single word on each record.
+rdd2 = rdd.flatMap(lambda x: x.split(" "))
+# This will loop over every string in rdd and outputs a list of words in a file
+
+#3 map() transformation is used the apply any complex operations like adding a column, updating a column e.t.c. the output of map transformations would always 
+   # have the same number of records as input.
+rdd3 = rdd2.map(lambda x: (x,1))
+
+#4 reduceByKey – reduceByKey() merges the values for each key with the function specified. In our example, it reduces the word string by applying the sum 
+   # function on value. The result of our RDD contains unique words and their count. 
+rdd4 = rdd3.reduceByKey(lambda a,b: a+b)
+# It gives the list of tuples which consist of word and its count
+
+#5 sortByKey – sortByKey() transformation #$is used to sort RDD elements on key.
+rdd5 = rdd4.map(lambda x: (x[1],x[0])).sortByKey()
+  # first, we convert RDD[(String,Int]) to RDD[(Int, String]) using map transformation (map(lambda x: (x[1],x[0])))
+  # and apply sortByKey which ideally does sort on an integer value
+  
+#6 filter() transformation is used to filter the records in an RDD.In our example we are filtering all words starts with “a”.
+rddf = rdd5.filter(lambda x : 'a' in x[1][0])
+
+#################################### rdd actions ################################
+
+#1 count() – Returns the number of records in an RDD
+print("Count : "+str(rdd5.count()))
+
+#2 first() – Returns the first record.
+print("first : "+str(rdd5.first()))
+
+#3 max() – Returns max record.
+print("max : "+str(rdd5.max()))
+
+#4 reduce() – Reduces the records to single, we can use this to count or sum.
+
+ 
+#5 take() – Returns the record specified as an argument.
+data3 = rdd5.take(3)	# returns A LIST of first 3 records/values
+
+#6 collect() – Returns all data from RDD as an array. 
+data=rdd5.collect()
+
+#7 saveAsTextFile() – Using saveAsTestFile action, we can write the RDD to a text file.
+rdd6.saveAsTextFile('any') 
+# saves the content of rdd6 in a file 'any'
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+---------------------------------------------------------------------------  PRODUCT  -----------------------------------------------------------------------
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+--------------------------------------------------------------------------- Mongodb  ------------------------------------------------------------------------
+
+# link to install community edition                         ----------> https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/
+# link to install mongodb compass; GUI got mangodb          ----------> https://www.mongodb.com/try/download/compass
+
+# To use the mongodb shellfrom ur terminal to interact      ----------> mongosh
+# To list all the available databases                       ----------> show dbs
+# To use/work on a specified database                       ----------> use <database-name>
+# To clear the screne                                       ----------> cls
+
+###### create operation #####
+
+
+
