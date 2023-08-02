@@ -880,16 +880,46 @@ rdd6.saveAsTextFile('any')
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 --------------------------------------------------------------------------- Mongodb  ------------------------------------------------------------------------
+---------  Things/Terms to know --------
+
+# field     (Coloum)  ---> In MongoDB, a field (also known as a key or attribute) is a fundamental unit of data storage within a document. 
+
+# document (row)     ---> In MongoDB, a document is a basic unit of data storage and the core data representation format. It is equivalent to a record or a row in
+                           a traditional relational database management system (RDBMS).
+
+# Collection (TABLE)  ---> In MongoDB, a collection is a grouping of individual documents. It is equivalent to a table in RDBMS
+
+# database            ---> In MongoDB, a database is a container for collections, and it is a fundamental unit for organizing and storing data. 
+
+----------------- installation & basic commands -----------------
 
 # link to install community edition                         ----------> https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/
 # link to install mongodb compass; GUI got mangodb          ----------> https://www.mongodb.com/try/download/compass
 
 # To use the mongodb shellfrom ur terminal to interact      ----------> mongosh
+# To get info of current db we are working on               ---------> db
 # To list all the available databases                       ----------> show dbs
+# To list all the available collections                     ----------> show collections
 # To use/work on a specified database                       ----------> use <database-name>
 # To clear the screne                                       ----------> cls
 
-###### create operation #####
+----------- create operation -----------
+      
+  !!! NOTE : COMMANDS ARE WRITTEN IN MONGODB SHELL !!! 
+                                                        |---> db.<collection-name>.insertOne({<keyname1>:<value1>,<keyname2>:<value2>})
+# To create a collecton in databese use the syntax   ---|
+                                                        |---> db.<collection-name>.insertMany([{<keyname1>:<value1>},{<keyname2>:<value2>},{<keyname3>:<value3>,{<keyname4>:<value4>}])
 
+     * insertOne() is used when we want to insert a single document to a collecton
 
+     * insertMany() is is used when we want to insert a multiple documents to a collecton
 
+-------------- Read/Find the data -----------
+
+# To read all the document inside collection     ---- > db.<collection-name>.find() (or) db.<collection-name>.find({})
+# To read a perticular document from collection  -----> db.<collection-name>.find({<Key-Name>:<ValueName>})
+# TO find a single document from collection      -----> db.<collection-name>.find{<Key-Name>:<ValueName>})
+
+-------------- Update ---------------------
+
+#
