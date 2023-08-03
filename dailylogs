@@ -1075,3 +1075,24 @@ db.orders.insertMany([
 # To check status of mysql-server ------> systemctl is-active mysql
 # To check the version          --------> sudo mysqladmin -p -u sac version
 
+----------------( bAsic OperaTionS )----------------------
+
+# To list all the databases                      ----> SHOW DATABASES;
+# To list all tabels in the databases            ----> SHOW TABLES;
+# To shows information on all columns of a table ----> DESCRIBE <Table-Name>;
+# To  provides even more details on the table    ----> SHOW CREATE TABLE <tab-name>\G
+# To creata a mew database                       ----> CREATE DATABASE <db-Name>;
+# To select a database to work on                ----> USE <db-name>;
+
+----------------------------------------------------------------------- CRUD OPERATIONS -------------------------------------------------------------
+
+# To create a table inside database              ----> CREATE TABLE <TAB-NAME> ( C1 D1 CO1, C2 D2 CO2 ---- CN DN CON, PRIMARY KEY  (PK-COL-NAME) );
+                                                                      # C1,C2,---CN : Coloumn Names
+                                                                      # D1,D2,---DN : Data Types for respective coloumn
+                                                                      # CO1,CO2--CON: Constrains for  respective coloumn
+# To add records/values to table                 ----> INSERT INTO <TAB-NAME> ( C1, C2,-- CN) VALUES ( A1, A2, -- A3 ), (B1, B2, -- BN), -- (N1, N2, -- NN);
+                                                                      # C1,C2,---CN : Coloumn Names
+                                                                      # A1,A2,---AN : vALUES OF OBJECT A
+                                                                      # B1,B2,--BN  : VALUES OF OBJECT B  
+                                                                      
+# To select all values from table                ----> SELECT * FROM <tab-name>;
