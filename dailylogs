@@ -897,7 +897,7 @@ rdd6.saveAsTextFile('any')
 # link to install mongodb compass; GUI got mangodb          ----------> https://www.mongodb.com/try/download/compass
 
 # To use the mongodb shellfrom ur terminal to interact      ----------> mongosh
-# To get info of current db we are working on               ---------> db
+# To get info of current db we are working on               ----------> db
 # To list all the available databases                       ----------> show dbs
 # To list all the available collections                     ----------> show collections
 # To use/work on a specified database                       ----------> use <database-name>
@@ -918,7 +918,7 @@ rdd6.saveAsTextFile('any')
 
 # To read all the document inside collection     ---- > db.<collection-name>.find() (or) db.<collection-name>.find({})
 # To read a perticular document from collection  -----> db.<collection-name>.find({<Key-Name>:<ValueName>})
-# TO find a single document from collection      -----> db.<collection-name>.find{<Key-Name>:<ValueName>})
+# TO find a single document from collection      -----> db.<collection-name>.findOne({<Key-Name>:<ValueName>})
 
 -------------- Update ---------------------
 
@@ -1010,3 +1010,57 @@ db.users.insertMany(
 * Aggregation Operators: # still have to work on it
 * Projection Operators:  # still have to work on it
 
+--------------------- Clauses in mongodb -----------------------
+
+In mongoDB, there are no special cases for where, groupby, having, orderby clauses as in traditional RDBMS
+Here we use aggrigate function and we pass combination of functions to perform a task of where, groupby, having, orderby in mongoDB
+
+!!!! CONSIDER THE EXAMPLE TO WORK WITH !!!!!!!
+
+db.orders.insertMany([
+  {
+  "_id": 1,
+  "customer": "John",
+  "product": "Widget",
+  "quantity": 3,
+  "total_price": 75
+},
+{
+  "_id": 2,
+  "customer": "Alice",
+  "product": "Gadget",
+  "quantity": 2,
+  "total_price": 100
+},
+{
+  "_id": 3,
+  "customer": "John",
+  "product": "Gadget",
+  "quantity": 1,
+  "total_price": 50
+},
+{
+  "_id": 4,
+  "customer": "Bob",
+  "product": "Widget",
+  "quantity": 5,
+  "total_price": 125
+}
+])
+
+## where clause 
+  ! SQL     ---> SQL: SELECT * FROM orders WHERE total_price > 60;
+  ! Mongodb ---> db.orders.aggregate([ {$match: {total_price : {$gt : 60}}}])
+
+## Groupby Clause
+  ! SQL     ---> SQL: SELECT product, SUM(quantity) AS total_quantity, SUM(total_price) AS total_price FROM orders GROUP BY product;
+  ! MongoDB ---> db.orders.aggregate([ { $group: { _id: "product",total_quantity: {$sum: "$quantity"}, total_price: { $sum: "$total_price"}}} ])
+
+##  Having Clause
+  ! SQL     ---> SELECT product, SUM(quantity) AS total_quantity FROM orders GROUP BY product  HAVING SUM(quantity) > 5;
+  ! MongoDB ---> db.orders.aggregate([ { $group: { _id: "product", total_quantity: { $sum: "$quantity"} }}, { $match: { total_quantity: { $gt: 5}}} ])
+
+
+## Orderby Cluse
+  ! SQL    ---> SQL: SELECT * FROM orders ORDER BY total_price DESC;
+  ! MongoDB --> db.orders.aggregate([{ $sort: { total_price: -1 }}])
