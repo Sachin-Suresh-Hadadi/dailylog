@@ -1064,3 +1064,14 @@ db.orders.insertMany([
 ## Orderby Cluse
   ! SQL    ---> SQL: SELECT * FROM orders ORDER BY total_price DESC;
   ! MongoDB --> db.orders.aggregate([{ $sort: { total_price: -1 }}])
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                                               mysql
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Install mysql on ubuntu       --------> https://www.digitalocean.com/community/tutorials/how-to-install-mysql-on-ubuntu-22-04
+# Install mysql-workbench-comm  --------> sudo snap install mysql-workbench-community
+# Login to ur server            --------> mysql -u sac -p
+# To check status of mysql-server ------> systemctl is-active mysql
+# To check the version          --------> sudo mysqladmin -p -u sac version
+
