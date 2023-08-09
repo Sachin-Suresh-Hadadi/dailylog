@@ -903,6 +903,7 @@ rdd6.saveAsTextFile('any')
 # To use/work on a specified database                       ----------> use <database-name>
 # To clear the screne                                       ----------> cls
 
+
 ----------- create operation -----------
       
   !!! NOTE : COMMANDS ARE WRITTEN IN MONGODB SHELL !!! 
@@ -914,13 +915,14 @@ rdd6.saveAsTextFile('any')
 
      * insertMany() is is used when we want to insert a multiple documents to a collecton
 
--------------- Read/Find the data -----------
+-------------- Read/Find the data and project only required -----------
 
 # To read all the document inside collection     ---- > db.<collection-name>.find() (or) db.<collection-name>.find({})
 # To read a perticular document from collection  -----> db.<collection-name>.find({<Key-Name>:<ValueName>})
 # TO find a single document from collection      -----> db.<collection-name>.findOne({<Key-Name>:<ValueName>})
-
--------------- Update ---------------------
+# To project only required data                  -----> db.orders.aggregate([ {$group: {_id:"$product", total_qty: {$sum: "$quantity"}, {$project: {_id: 0, product: "$_id",total_qty:1}} ])
+                                                                                                                                        ---------------------------|-------------------------
+-------------- Update ---------------------                                                                       projrcting req data : 0 means hide, 1 for show <-|                                                    
 
 # To modify the single document in a collection  -----> db.<collection-name>.updateOne( {<feildName>: <Value>},{ $set : {<field-name>: <new-value>},$currentDate : {lastmodified: true}})
                                                                                          ----------|-----------        --------------|--------------
@@ -1065,6 +1067,23 @@ db.orders.insertMany([
   ! SQL    ---> SQL: SELECT * FROM orders ORDER BY total_price DESC;
   ! MongoDB --> db.orders.aggregate([{ $sort: { total_price: -1 }}])
 
+## Distinct
+  ! To find list of distict values in collection  ----> db.<collection>.distinct({<field-name> : <value>})
+  ! To find combination of distint values         ----> db.<collection>.distinct({<field-name> : <value>}, {<field-name1> : <value1>})
+
+## To get only req o/p in aggregation pipeline
+  ! db.orders.aggregate([ { $group: { _id: "$customer" } }, { $project: { _id: 0,  customer: "$_id"} }] )
+                                                             ## _id: 0             ----> Exclude the _id field*/
+                                                             ## customer: "$_id"   ----> Rename the _id field to customer
+
+------------------------------- mongodup and mongorestore ------------------------
+
+# To dump all databases                 ----> mongodump
+# To restore all databases              ----> mongorestore
+# To dump a single database             ----> mongodump -d <db-name>
+# To restore a single database          ----> mongorestore -d <db-name> /path/to/db
+# To dump single collection             ----> mongddump -d <db-name> -c <Collection-name>
+
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------
                                                                mysql
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1074,6 +1093,7 @@ db.orders.insertMany([
 # Login to ur server            --------> mysql -u sac -p
 # To check status of mysql-server ------> systemctl is-active mysql
 # To check the version          --------> sudo mysqladmin -p -u sac version
+# TO clear screen               --------> ctrl+l
 
 ----------------( bAsic OperaTionS )----------------------
 
@@ -1094,5 +1114,14 @@ db.orders.insertMany([
                                                                       # C1,C2,---CN : Coloumn Names
                                                                       # A1,A2,---AN : vALUES OF OBJECT A
                                                                       # B1,B2,--BN  : VALUES OF OBJECT B  
-                                                                      
+
 # To select all values from table                ----> SELECT * FROM <tab-name>;
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                                HADOOP
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+# Installation link                              ----> https://tecadmin.net/how-to-install-apache-hadoop-on-ubuntu-22-04/
+# To start the Hadoop cluster                    ----> start-all.sh
+# To stop the clster                             ----> stop-all.sh
+# To list all commands                           ----> hdfs
