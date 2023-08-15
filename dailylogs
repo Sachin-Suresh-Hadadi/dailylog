@@ -1076,13 +1076,20 @@ db.orders.insertMany([
                                                              ## _id: 0             ----> Exclude the _id field*/
                                                              ## customer: "$_id"   ----> Rename the _id field to customer
 
-------------------------------- mongodup and mongorestore ------------------------
+------------------------------- mongodump and mongorestore ------------------------
+
+!!!!! NOTE : TO RESTORE, THE SOURCE HAS TO BE DELETED IN MONGODB, IF SOURCE IS PRESENT, THE RESTORATION FAILS   !!!!!
 
 # To dump all databases                 ----> mongodump
 # To restore all databases              ----> mongorestore
-# To dump a single database             ----> mongodump -d <db-name>
-# To restore a single database          ----> mongorestore -d <db-name> /path/to/db
-# To dump single collection             ----> mongddump -d <db-name> -c <Collection-name>
+# To dump a single database             ----> mongodump  -d <dbname> --out /path/to/folder
+# To restore a single database          ----> mongorestore path/to/source/folder
+# To dump single collection             ----> mongodump -d <db-name> -c <Collection-name> --out /path/to/folder
+# To restore a single collection        ----> mongorestore path/to/source/folder
+# To restore a specific data            ----> mongodump -d <db-name> -c <Collection-name> --query '{<yourquery>}' --out /path/to/folder
+                                              Eg: mongodump -d Employees -c orders --query '{"total_price": {"$gt": 60}}' --out Devops
+# To restore that specific data         ----> mongorestore path/to/source/folder
+
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------
                                                                mysql
@@ -1117,6 +1124,16 @@ db.orders.insertMany([
 
 # To select all values from table                ----> SELECT * FROM <tab-name>;
 
+------------------------------------------------------------------------  DUMP AND RESTORE -----------------------------------------------------------
+
+# TO Dump an entier database                     ----> mysqldump -u <username> -p <dbname> > /op/file.sql
+# To dump a table from database                  ----> mysqldump -u <username> -p <dbname> <tablename> > /op/file.sql
+# To dump a selected data from database          ----> mysqldump -u <username> -p <dbname> <tablename> -w "<condition>" > op/file.sql
+# To restore the database                        ----> mysql -u root -p <dbname> < source/file.sql
+# To restore table in database                   ----> mysql -u root -p <dbname> < source/file.sql
+# To restore selected data from database         ----> mysql -u root -p <dbname> < source/file.sql
+
+
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                                 HADOOP
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1124,4 +1141,29 @@ db.orders.insertMany([
 # Installation link                              ----> https://tecadmin.net/how-to-install-apache-hadoop-on-ubuntu-22-04/
 # To start the Hadoop cluster                    ----> start-all.sh
 # To stop the clster                             ----> stop-all.sh
-# To list all commands                           ----> hdfs
+# To list all commands                           ----> h	dfs
+# Hadoop, Application page                       ----> http://localhost:9870, http://localhost:8088
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# To copy file from local to hdfs                     ----> hdfs dfs -copyFromLocal <source> <destination> (or) hdfs dfs -put <source> <destination>
+# To move file from local to hdfs                     ----> hdfs dfs -moveFromLocal <source> <destination
+# To copy from hdfs to local                          ----> hdfs dfs -copyToLocal <source> <destination>
+# To check disk usage of each file in directory       ----> hdfs dfs -du <folder>
+# To check disk usage of entier directory             ----> hdfs dfs -dus <folder>
+# To merge content of multiple files to singl file    ----> hdfs dfs -getmerge <source1> <source2> <destination>
+# To create a parent directory that doesnt exist      ----> hdfs dfs -mkdir -p /user/<UserName>/<DirName>  # -p indictes to create any parent directories that don't exist
+# To check weather it is a file or not                ----> hdfs dfs -test -f  /user/<Username>/path/to/file && echo $? -----|
+# To check weather it is a directory or not           ----> hdfs dfs -test -d  /user/<Username>/path/to/file && echo $? -----|--| 0 is true
+# To check weather file/directory it exist or not     ----> hdfs dfs -test -e  /user/<Username>/path/to/file && echo $? -----|--| 1 is false
+# To check weather it has content or not              ----> hdfs dfs -test -z  /user/<Username>/path/to/file && echo $? -----|
+# command 2 report on missing, under-replicated, and 
+  corrupted blocks.                                   ----> hdfs fsck / -files -blocks -locations
+# To get first 1kb content of file                    ----> hdfs dfs -head /user/<Username>/path/to/file
+# To get last 1kb content of file                     ----> hdfs dfs -tail /user/<Username>/path/to/file
+# To delete all the file in trash                     ----> hdfs dfs -expunge
+# To balance data equally in all nodes of cluster     ----> hdfs balance
+
+
+
+
