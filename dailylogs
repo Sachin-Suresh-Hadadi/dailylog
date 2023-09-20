@@ -879,7 +879,7 @@ rdd6.saveAsTextFile('any')
 ---------------------------------------------------------------------------  PRODUCT  -----------------------------------------------------------------------
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
---------------------------------------------------------------------------- Mongodb  ------------------------------------------------------------------------
+---------------------------------------------------------------------------- MongoDB  -----------------------------------------------------------------------
 ---------  Things/Terms to know --------
 
 # field     (Coloum)  ---> In MongoDB, a field (also known as a key or attribute) is a fundamental unit of data storage within a document. 
@@ -908,7 +908,7 @@ rdd6.saveAsTextFile('any')
       
   !!! NOTE : COMMANDS ARE WRITTEN IN MONGODB SHELL !!! 
                                                         |---> db.<collection-name>.insertOne({<keyname1>:<value1>,<keyname2>:<value2>})
-# To create a collecton in database use the syntax   ---|
+# To create a collecton in database use the syntax   ---|                                      
                                                         |---> db.<collection-name>.insertMany([{<keyname1>:<value1>},{<keyname2>:<value2>},{<keyname3>:<value3>,{<keyname4>:<value4>}])
 
      * insertOne() is used when we want to insert a single document to a collecton
@@ -925,10 +925,10 @@ rdd6.saveAsTextFile('any')
 -------------- Update ---------------------                                                                       projrcting req data : 0 means hide, 1 for show <-|                                                    
 
 # To modify the single document in a collection  -----> db.<collection-name>.updateOne( {<feildName>: <Value>},{ $set : {<field-name>: <new-value>},$currentDate : {lastmodified: true}})
-                                                                                         ----------|-----------        --------------|--------------
-                                                                                                   |                                 |
+                                                                                         ----------|-----------        --------------|------------- ---------------------|----------------
+                                                                                                   |                                 |                                   |-> Optional
                                                                                 (To identify the DOCUMENT that need to change)     (To select and update the new-value)   
-                                                                                                    |                                |
+                                                                                                    |                                |                           
                                                                                         ------------|---------          -------------|--------------
 # To modify the single document in a collection  -----> db.<collection-name>.updateMany( {<feildName>: <Value>},{ $set : {<field-name>: <new-value>},$currentDate : {lastmodified: true}})
    
@@ -996,7 +996,7 @@ db.users.insertMany(
 
 * Array Operators:
 
-     * $in: Matches any of the values specified in an array.         ----> db.users.find({ hobbies: { $in: ["reading", "cooking"] } })
+     * $in : Matches any of the values specified in an array.        ----> db.users.find({ hobbies: { $in: ["reading", "cooking"] } })
      * $nin: Matches none of the values specified in an array.       ----> db.users.find({ hobbies: { $nin: ["gaming", "swimming"] } })
      * $all: Matches arrays that contain all the specified elements. ----> db.users.find({ hobbies: { $all: ["reading", "cooking"] } })
      * $elemMatch: Matches documents that contain an array element   ----> db.users.find({ hobbies: { $elemMatch: { $eq: "reading", $ne: "cooking" } } }) 
@@ -1092,7 +1092,7 @@ db.orders.insertMany([
 
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------
-                                                               mysql
+                                                                           MYSQL
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Install mysql on ubuntu       --------> https://www.digitalocean.com/community/tutorials/how-to-install-mysql-on-ubuntu-22-04
@@ -1135,7 +1135,7 @@ db.orders.insertMany([
 
 
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                                HADOOP
+                                                                          HADOOP
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 # Installation link                              ----> https://tecadmin.net/how-to-install-apache-hadoop-on-ubuntu-22-04/
