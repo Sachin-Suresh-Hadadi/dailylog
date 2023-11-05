@@ -1,0 +1,147 @@
+Seting the stage: 
+
+* Clint add data to s3 bucket, that bucket may be belong to clint or he may add to our bucket
+* In Etl-DM there is a cron job set for every 5 min, based on the last_modified_time in s3_summary, it will identify and list those newly 
+  added files in s3 bucket and then updates rhe metadata of the listed files in s3_summary.
+* In case of mobilefuse, they give us four types of data. namely Request, responses, Event and impression
+* For each Request, responses, Event and impression; there is a seperate folder in s3 bucket where clint data and etl-dm will pick from 
+  the same folders.
+
+Scanner :
+
+* Scanner component is used to combine ths files that theur filesize reaches 1gb if they are added. If 3 files a,b,c sum upto 1gb of content
+  they get the same hashcol by scanner.
+* Scanner component_queue file is updated for every 20 seconds with a new for entry each one for Request, responses, Event and impression.
+* For an hour it will get 720 entries, out of which only 20% of entries can be seen in scanner_files bcz as it gives single hashcol to 
+  multiple files, so one entry is created in scanner file for each hashcol and it is also give a key for identification.
+* As soon as the job is completed it is updated in scanner_files by the scanner.
+* For each hour, 12 entries can be seen for event and impression as the file size is less.
+
+Ingestor :
+
+* Ingestor is used to extract the required data and convert it from any format to parquet format.
+* Ingestor queue is update every min, can be seen by analysing the created_time in table. So if there are any new entries made in 
+  scanner_queue for the previous min, then they are updated in this min in ingestor_queue.
+* For every entry of event and impression in ingestor queue, there will be 2 entries made in ingestor_files, as tracker data is same for both
+  request and response, till ingestor_files we will process tracker data only for requests and it will bw duplicated in ingestor_files for
+  responses. Hence there will 24 entries extra in ingestor_files for a pericular hour if we compare with ingestor_queue.
+ 
+Output map location in ingestor queue: 
+responses#
+s3://sigmoid-mobilefuse//MobileFuse-Output/ingest//requests/945fc60c94b2d960e31e6a8572167f57/2023_10_16_00_01_01/
+
+dst in ingestor files:
+s3://sigmoid-mobilefuse//MobileFuse-Output/ingest//requests/2023-10-16/00/945fc60c94b2d960e31e6a8572167f57/2023_10_16_00_01_01/
+                                                             ---------- -  -------------------------------- -------------------
+                                                                  |     |                  |                         |                                  
+                                                                date   created_hour_in_q   key                   created_time in_ingestor_queue
+* In ingestor_files base data has an waiting hour of 1 hr 5 min, but tracker data is passed to joiner without any waiting time. 
+
+
+Joiner 
+
+* The joiner_queue is updated for every 5 min. 
+* For every update in 5 min, considering it is updated at 6th hr 12th min, it contain the job entries of 5th hr 7th min to 11th min 
+  in ingestor files.
+* It has a coloumn name called as join_files which contain the single filepath of a pericular basedata and all the trackerdata of that 
+  perticular hour and the next hour. 
+* It is going to combine the base data to the tracker data by looking into the request id. If request id of both tracker and base matches
+  it joins both.In queue "output_path" is also mentioned that look like
+  mobilefuse#
+  s3://sigmoid-mobilefuse///MobileFuse-Output/join/insertinsert/mobilefuse/2023-10-16/01/945fc60c94b2d960e31e6a8572167f57/1697418424166
+                                                                                                                          -------------
+                                                                                                                                |
+                                                                                                                            created_time in ?
+* If u expand the join_files coloumn in joiner_queue, it will contain a list of all the file paths of the tracker data ranging from last 
+  55 min to next 60 min along with the filepath of that perticular base data entrey.
+                        
+             |--------------------|---------------------|
+      -55 min trackerdata     current_hr           +60 min trackerdata
+       (backword window)          (0)                 (forword window).
+
+* After joining, it will write into a output path that can be seen in dest coloumn of joiner files that look like 
+  s3://sigmoid-mobilefuse///MobileFuse-Output/join/insertinsert/mobilefuse/2023-10-16/01/945fc60c94b2d960e31e6a8572167f57/1697418424166/*
+
+
+!!! created time is same in queue and file table. why? !!!
+!!! In some cases created_time > modified_time, why ? !!!
+
+
+Wrangler : 
+
+If U check modified_time in joiner files, modified_time is of 0th to 4th sec only, as they are modified, they are updated in wrangler queue
+which menas modified time of a job in a joiner_files is ~= creation time in wrangler queue
+
+src: 
+s3://sigmoid-mobilefuse///MobileFuse-Output/join/insertinsert/mobilefuse/2023-10-16/01/945fc60c94b2d960e31e6a8572167f57/1697418424166/*
+                                                                                    |
+                     |--------------------------------------------------------------
+* If u compare the hours, there will be difference bcz, in "src" it's time of creation in joiner and in "dest", it's a time of data given by user.
+                     |-------------------------------------------------
+dest:                                                                  |  
+s3://sigmoid-mobilefuse/MobileFuse-Output/wrangle/wrangler/2023-10-15/23/945fc60c94b2d960e31e6a8572167f57/PARQUET/HALFHOURPARTITION/partitionCol=1697412600000
+
+validator :
+
+* validator_queue is updated every min, it consist of the those entries of a last min entries in wrangler_files.
+* In validator jobs dont take too much of time as they can be seen in validator_files within some seconds difference than validator_queue.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Rawdata : 
+* To get entries for perticuler day : db.RawData.find({$and: [ {time: {$gte: 1697583600000}}, {time: {$lte: 1697583600000}}]}).count()
+* To get max time                   : db.RawData.aggregate([{$group: {_id: null, max: {$max: "$time"}}}])
+* If u run this above query, u will get 48 entries for a day, 2 for each hour, 1-> supply and 1-> demand.
+* The "file" coloumn contain all the filepaths of the that perticular hour.
+
+
+Projections :
+GSQ ---> 2   ----> "MF_Demand_GS_8thSept23", "MobileFuse-supply-grouped-sort-08Sept23"
+SQ  ---> 6   ----> "Demand-day-sort1-08Sept23", "Demand-day-sort2-08Sept23", "Demand-day-sort3-08Sept23", "SupplySort3-08Sept23",  "SupplySort1-08thSept23", "SupplySort2-08Sept23" 
+HRQ ---> 316 ----> (196-supply, 120 -> demand )
+DRQ ---> 446 ----> 
+IQ  ---> 20  ----> 
+
+
+Rawdata          --> SourceName --> "MobileFuse-Demand-Factual", "MobileFuse-Supply-Factual", "MobileFuse-Enhance-Factual"
+Projections      --> ProjectionID
+TriggerQueue     --> ProjectionHash
+ComponentQueue   --> SourceName
+component        --> Key
+
+Projection : [for GROUPEDSORT]
+  ! type: 'GROUPBY', 'GROUPEDSORT', 'RAW', 'SORT'
+  ! logicalTableName
+  ! physicalTableName
+  ! groupByColumns (35-> demand, 45-> supply)
+  ! agg
+  ! sort ("advertiser_id,creative_id"-> MF_Demand_GS_8thSept23, "call_type,app_bundle" -> MobileFuse-supply-grouped-sort-08Sept23, )
+  ! granularity
+  ! range
+  ! indexe
+  ! coloumnspresent
+  ! indexingdisabled
+  ! Trigger
+  ! dependencies
+  ! ProjectionID
+
+  * [for Daysort]
+
+  ! _id
+  ! type : "SORT"
+  ! logicalTableName
+  ! physicalTableName
+  ! sort : "advertiser_id,placement_id,seat"
+  ! granularity
+  ! range
+  ! indexingDisabled
+  ! trigger
+  ! dependencies
+  ! index
+  ! projectionId
+  ! columnsPresent
+  ! agg
+
+s3a://sigmoid-mergedata/MergeData/MobileFuse-Demand-Factual/GROUPEDSORT/HOUR/2023-10-28/12/MF_Demand_GS_8thSept23/bd5c87201bf1da8125f319d0f0e7cf4c/1698504522580/1698505065410
+
+ 
