@@ -144,4 +144,5 @@ Projection : [for GROUPEDSORT]
 
 s3a://sigmoid-mergedata/MergeData/MobileFuse-Demand-Factual/GROUPEDSORT/HOUR/2023-10-28/12/MF_Demand_GS_8thSept23/bd5c87201bf1da8125f319d0f0e7cf4c/1698504522580/1698505065410
 
- 
+ indexing is done to fasten the query. It is a component of DaySort.
+The daysort output file will be very heavy because it has all the data of a day. So it would be very difficult to read if a query is generated for a specific dimension. So we do indexing for the specific and frequently used dimension. And save the indexing in mongo like where that specific dimension is stored on s3.
